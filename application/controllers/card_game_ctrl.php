@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+require_once BASEPATH.'../application/libraries/Card.php';
 
 class Card_game_ctrl extends CI_Controller {
 
@@ -9,7 +10,9 @@ class Card_game_ctrl extends CI_Controller {
     public function __construct()
     {
         parent::__construct();
+        $this->load->library('session');
         $this->load->model('card_game_model');
+        $this->load->library('card');
         $this->load->helper('url_helper');
     }
 
@@ -35,17 +38,34 @@ class Card_game_ctrl extends CI_Controller {
 
     public function initialize_game()
     {
-        $data['title'] = ucfirst('Explosia'); // Capitalize the first letter
-        $this->card_game_model->create_deck("player");
+        $this->card_game_model->create_deck('player');
+        $this->card_game_model->create_deck('cpu');
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('pages/gamepage', $data);
-        $this->load->view('templates/footer', $data);
+        $this->update();
     }
 
-    public function play_game()
+    public function set_session_variables()
+    {
+        $this->session->set_userdata(array('player_deck' => $this->card_game_model->get_deck('player_deck'),
+            'cpu_deck' => $this->card_game_model->get_deck('cpu_deck')));
+    }
+
+    public function attack()
+    {
+        $this->card_game_model->set_deck('player_deck', $this->session->player_deck);
+        $this->card_game_model->set_deck('cpu_deck', $this->session->cpu_deck);
+
+        $this->card_game_model->attack_character('player_deck', 'motrado', 5);
+        $this->update();
+    }
+
+    public function update()
     {
         $data['title'] = ucfirst('Explosia'); // Capitalize the first letter
+        $this->set_session_variables();
+
+        $data['player_deck'] = $this->card_game_model->get_deck('player_deck');
+        $data['cpu_deck'] = $this->card_game_model->get_deck('cpu_deck');
 
         $this->load->view('templates/header', $data);
         $this->load->view('pages/gamepage', $data);

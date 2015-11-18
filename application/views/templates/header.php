@@ -1,3 +1,4 @@
+<!-- Defines the header for the application -->
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?><!DOCTYPE html>
@@ -30,7 +31,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <ul id="navbar-links" class="nav navbar-nav navbar-right">
                     <li><a href=<?php echo site_url('card_game_ctrl'); ?>>Play</a></li>
 
-                    <li><a href=<?php echo site_url('card_game_ctrl/display_page/about'); ?>>About</a></li>
+                    <li><a href=<?php echo site_url('card_game_ctrl/about'); ?>>About</a></li>
                 </ul>
             </div>
         </div>

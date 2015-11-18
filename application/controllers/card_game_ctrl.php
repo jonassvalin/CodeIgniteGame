@@ -83,6 +83,16 @@ class Card_game_ctrl extends CI_Controller {
     }
 
     /**
+     *
+     */
+    public function about()
+    {
+        $data['title'] = ucfirst('Explosia'); // Capitalize the first letter
+
+        $this->display_page("about", $data);
+    }
+
+    /**
      * Sets the session variables and pushes the current status of the decks to the view
      */
     private function update()

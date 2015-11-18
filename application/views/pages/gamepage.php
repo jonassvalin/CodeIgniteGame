@@ -1,6 +1,6 @@
 <!-- Defines the screen for the active game -->
 <div class="content">
-    <form action="<?php echo site_url('card_game_ctrl/attack'); ?>" method="post" name="gamepageform">
+    <form action="<?php echo base_url('card_game_ctrl/attack'); ?>" method="post" name="gamepageform">
         <!-- This row displays the CPU cards and their current status -->
         <div class="row">
 
@@ -8,7 +8,7 @@
                 <div class="col-md-4">
                     <h3><?php echo $cpu_card->get_name(); ?></h3>
                     <!--Styles should NOT be here, this is a temp bugfix for system not recognizing class styles-->
-                    <img src="<?php echo site_url($cpu_card->get_imagesrc()); ?>" alt="Card Image"
+                    <img src="<?php echo base_url($cpu_card->get_imagesrc()); ?>" alt="Card Image"
                          style="max-width: 200px;">
                     <br>
                     <?php echo 'HP: '.$cpu_card->get_health().'/'.$cpu_card->get_max_health(); ?>
@@ -33,7 +33,7 @@
                 <div class="col-md-4">
                     <h3><?php echo $player_card->get_name(); ?></h3>
                     <!--Styles should NOT be here, this is a temp bugfix for system not recognizing class styles-->
-                    <img src="<?php echo site_url($player_card->get_imagesrc()); ?>" alt="Card Image"
+                    <img src="<?php echo base_url($player_card->get_imagesrc()); ?>" alt="Card Image"
                          style="max-width: 200px;">
                     <br>
                     <?php echo 'HP: '.$player_card->get_health().'/'.$player_card->get_max_health(); ?>

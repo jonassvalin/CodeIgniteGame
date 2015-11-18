@@ -6,9 +6,12 @@ This game was built in educational purposes and is not meant to infringe on any 
 any way. If any of the image resources belong to you and you want them to remove, please let me know.
 
 ##TODO
--User login page with high score and communication functionality
--More cards
--Custom cards
--More sophisticated gaming mechanics
--Setup unit testing
--Code refactoring/restructuring
+- User login page with high score and communication functionality
+- More cards
+- Custom cards
+- More sophisticated gaming mechanics
+- Setup unit testing
+- Code refactoring/restructuring
+
+##Play
+[Here!](https://codeigniter-jonassvalin.rhcloud.com/)

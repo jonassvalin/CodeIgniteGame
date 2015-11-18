@@ -6,6 +6,7 @@ class Card {
     private $max_health;
     private $attack;
     private $damage;
+    private $imagesrc;
 
     /**
      * Card constructor.
@@ -13,11 +14,12 @@ class Card {
      * @param $health of the character initially
      * @param $attack power of the character
      */
-    public function __construct($name, $health, $attack)
+    public function __construct($name, $health, $attack, $imagesrc)
     {
         $this->name = $name;
         $this->max_health = $health;
         $this->attack = $attack;
+        $this->imagesrc = $imagesrc;
         $this->damage = 0;
     }
 
@@ -35,6 +37,10 @@ class Card {
 
     public function get_attack() {
         return $this->attack;
+    }
+
+    public function get_imagesrc() {
+        return $this->imagesrc;
     }
 
     /**

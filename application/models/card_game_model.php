@@ -9,6 +9,7 @@ class Card_game_model extends CI_Model {
     private $cpu = 'cpu';
     private $player_deck;
     private $cpu_deck;
+    private $result;
 
     /**
      * Card_game_model constructor. Simply loads the database used by the game.
@@ -39,11 +40,13 @@ class Card_game_model extends CI_Model {
         $available_cards = $this->get_cards();
         if ($deck_owner === $this->player) {
             foreach ($available_cards as $card) {
-                $this->player_deck[$card['name']] = new Card($card['name'], $card['health'], $card['attack']);
+                $this->player_deck[strtoupper($card['name'])] = new Card(strtoupper($card['name']), $card['health'],
+                    $card['attack'], $card['imagesrc']);
             }
         } elseif ($deck_owner === $this->cpu) {
             foreach ($available_cards as $card) {
-                $this->cpu_deck[$card['name']] = new Card($card['name'], $card['health'], $card['attack']);
+                $this->cpu_deck[strtoupper($card['name'])] = new Card(strtoupper($card['name']), $card['health'],
+                    $card['attack'], $card['imagesrc']);
             }
         }
 
@@ -63,12 +66,70 @@ class Card_game_model extends CI_Model {
         $this->$deck_owner = $deck;
     }
 
-    public function attack_character($deck_owner, $name, $attack)
+    public function attack_updates()
     {
-        foreach ($this->$deck_owner as $player_card) {
-            if ($player_card->get_name() === $name) {
-                $player_card->increase_damage($attack);
+        $this->attack_cpu();
+        $this->attack_player();
+        $this->check_deaths();
+        $this->check_result();
+    }
+
+    private function attack_cpu()
+    {
+        foreach($this->player_deck as $player_card) {
+            $attacked = $_POST['select'.$player_card->get_name()];
+            $this->attack_character($this->cpu_deck[$attacked], $player_card->get_attack());
+        }
+    }
+
+    private function attack_player()
+    {
+        $player_keys = array_keys($this->player_deck);
+        shuffle($player_keys);
+        $key_pos = 0;
+        $max_key_pos = count($this->player_deck)-1;
+        foreach($this->cpu_deck as $cpu_card) {
+            $k = min($key_pos, $max_key_pos);
+            $this->attack_character($this->player_deck[$player_keys[$k]], $cpu_card->get_attack());
+            $key_pos++;
+        }
+    }
+
+    private function attack_character($character_card, $attack)
+    {
+        $character_card->increase_damage(rand(0, $attack));
+    }
+
+    private function check_deaths()
+    {
+        foreach($this->player_deck as $player_card) {
+            if($player_card->get_health() <= 0) {
+                unset($this->player_deck[$player_card->get_name()]);
             }
         }
+        foreach($this->cpu_deck as $cpu_card) {
+            if($cpu_card->get_health() <= 0) {
+                unset($this->cpu_deck[$cpu_card->get_name()]);
+            }
+        }
+    }
+
+    private function check_result()
+    {
+        $player_chars_remaining = count($this->player_deck);
+        $cpu_chars_remaining = count($this->cpu_deck);
+
+        if($player_chars_remaining === 0 && $cpu_chars_remaining === 0) {
+            $this->result = "It is a draw!";
+        } else if ($player_chars_remaining === 0) {
+            $this->result = "CPU wins, you better practice more!";
+        } else if ($cpu_chars_remaining === 0) {
+            $this->result = "You win, good job!";
+        }
+    }
+
+    public function get_result()
+    {
+        return $this->result;
     }
 }

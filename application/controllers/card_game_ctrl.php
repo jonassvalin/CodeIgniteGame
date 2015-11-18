@@ -5,7 +5,7 @@ require_once BASEPATH.'../application/libraries/Card.php';
 class Card_game_ctrl extends CI_Controller {
 
     /**
-     * Card game controller
+     * Card game controller. Loads the necessary model, libraries and helpers
      */
     public function __construct()
     {
@@ -16,12 +16,20 @@ class Card_game_ctrl extends CI_Controller {
         $this->load->helper('url_helper');
     }
 
+    /**
+     *
+     */
     public function index()
     {
         $this->display_page();
     }
 
-    public function display_page($page = 'introscreen', $data = array())
+    /**
+     * @param string $page
+     * @param array $data
+     * Displays the chosen page and pushes the data given to be used by the view
+     */
+    private function display_page($page = 'introscreen', $data = array())
     {
         if ( ! file_exists(APPPATH.'/views/pages/'.$page.'.php'))
         {
@@ -36,6 +44,9 @@ class Card_game_ctrl extends CI_Controller {
         $this->load->view('templates/footer', $data);
     }
 
+    /**
+     * Initializes the game by creating new decks for player and CPU
+     */
     public function initialize_game()
     {
         $this->card_game_model->create_deck('player');
@@ -44,12 +55,18 @@ class Card_game_ctrl extends CI_Controller {
         $this->update();
     }
 
-    public function set_session_variables()
+    /**
+     * Sets the decks in the session so they can be persisted after update
+     */
+    private function set_session_variables()
     {
         $this->session->set_userdata(array('player_deck' => $this->card_game_model->get_deck('player_deck'),
             'cpu_deck' => $this->card_game_model->get_deck('cpu_deck')));
     }
 
+    /**
+     * Retrieves the decks from the session and calls the attack functionalities in the model
+     */
     public function attack()
     {
         $this->card_game_model->set_deck('player_deck', $this->session->player_deck);
@@ -65,7 +82,10 @@ class Card_game_ctrl extends CI_Controller {
         }
     }
 
-    public function update()
+    /**
+     * Sets the session variables and pushes the current status of the decks to the view
+     */
+    private function update()
     {
         $this->set_session_variables();
 
@@ -73,8 +93,6 @@ class Card_game_ctrl extends CI_Controller {
         $data['player_deck'] = $this->card_game_model->get_deck('player_deck');
         $data['cpu_deck'] = $this->card_game_model->get_deck('cpu_deck');
 
-        $this->load->view('templates/header', $data);
-        $this->load->view('pages/gamepage', $data);
-        $this->load->view('templates/footer', $data);
+        $this->display_page("gamepage", $data);
     }
 }

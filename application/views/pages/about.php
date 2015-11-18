@@ -1,3 +1,4 @@
+<!-- Defines the screen for the about page -->
 <div class="content">
     <div id="jumbo" class="jumbotron text-center" >
         <h1>About</h1>

@@ -53,7 +53,7 @@ class Card_game_model extends CI_Model {
     }
 
     /**
-     * @param $whos_deck
+     * @param $deck_owner
      * @return The deck of either the player or the CPU
      */
     public function get_deck($deck_owner)
@@ -61,11 +61,19 @@ class Card_game_model extends CI_Model {
         return $this->$deck_owner;
     }
 
+    /**
+     * @param $deck_owner
+     * @param $deck
+     * Sets the deck of either player
+     */
     public function set_deck($deck_owner, $deck)
     {
         $this->$deck_owner = $deck;
     }
 
+    /**
+     * Calls all attack-related methods
+     */
     public function attack_updates()
     {
         $this->attack_cpu();
@@ -74,14 +82,21 @@ class Card_game_model extends CI_Model {
         $this->check_result();
     }
 
+    /**
+     * Performs attack against CPU
+     * Attack-level is handicapped to compensate for CPUs poor AI
+     */
     private function attack_cpu()
     {
         foreach($this->player_deck as $player_card) {
             $attacked = $_POST['select'.$player_card->get_name()];
-            $this->attack_character($this->cpu_deck[$attacked], $player_card->get_attack());
+            $this->attack_character($this->cpu_deck[$attacked], $player_card->get_attack()-1);
         }
     }
 
+    /**
+     * Performs attack against player, extremelly basic
+     */
     private function attack_player()
     {
         $player_keys = array_keys($this->player_deck);
@@ -95,11 +110,19 @@ class Card_game_model extends CI_Model {
         }
     }
 
+    /**
+     * @param $character_card
+     * @param $attack
+     * Executes attack against specific character card with a random attack-level from zero to $attack
+     */
     private function attack_character($character_card, $attack)
     {
         $character_card->increase_damage(rand(0, $attack));
     }
 
+    /**
+     * Checks whether any characters have died, and if so removes them from the deck
+     */
     private function check_deaths()
     {
         foreach($this->player_deck as $player_card) {
@@ -114,6 +137,9 @@ class Card_game_model extends CI_Model {
         }
     }
 
+    /**
+     * Checks if either or both player and CPU have lost all character cards
+     */
     private function check_result()
     {
         $player_chars_remaining = count($this->player_deck);
@@ -122,12 +148,15 @@ class Card_game_model extends CI_Model {
         if($player_chars_remaining === 0 && $cpu_chars_remaining === 0) {
             $this->result = "It is a draw!";
         } else if ($player_chars_remaining === 0) {
-            $this->result = "CPU wins, you better practice more!";
+            $this->result = "CPU wins, better practice!";
         } else if ($cpu_chars_remaining === 0) {
             $this->result = "You win, good job!";
         }
     }
 
+    /**
+     * @return The result defined in check_result
+     */
     public function get_result()
     {
         return $this->result;
